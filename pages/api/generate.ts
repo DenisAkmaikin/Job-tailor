@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import pdfParse from "pdf-parse";
 import fs from "fs";
+import type { Fields, Files, File } from "formidable";
 
 // Disable Next.js JSON body parser so we can handle multipart/form-data (files)
 export const config = { api: { bodyParser: false } };
@@ -9,12 +10,14 @@ export const config = { api: { bodyParser: false } };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end("Method not allowed");
 
-  // ✅ ESM-safe dynamic import for formidable (works in Next.js API routes)
+  // ESM-safe dynamic import for formidable (works in Next.js API routes)
   const { formidable } = await import("formidable");
   const form = formidable({ multiples: false, keepExtensions: true });
 
-  form.parse(req, async (err: any, fields: any, files: any) => {
-    if (err) return res.status(500).json({ error: "Failed to parse form data" });
+  form.parse(req, async (err: Error | null, fields: Fields, files: Files) => {
+    if (err) {
+      return res.status(500).json({ error: "Failed to parse form data" });
+    }
 
     // ---- Text fields (present whether or not PDFs are uploaded) ----
     const name = (fields.name as string) || "";
@@ -27,21 +30,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let resume = (fields.resume as string) || "";
 
     // ---- Helper to read + parse a single PDF file ----
-    async function extractPdfText(fileField: any): Promise<string | null> {
+    async function extractPdfText(
+      fileField?: File | File[] | undefined
+    ): Promise<string | null> {
       if (!fileField) return null;
       const fileObj = Array.isArray(fileField) ? fileField[0] : fileField;
-      if (!fileObj?.filepath) return null;
-      const data = fs.readFileSync(fileObj.filepath);
+      // Formidable v3 sets `filepath` on uploaded files
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const filepath = (fileObj as any)?.filepath as string | undefined;
+      if (!filepath) return null;
+
+      const data = fs.readFileSync(filepath);
       const pdf = await pdfParse(data);
-      return pdf.text?.trim() || null;
+      const text = (pdf.text || "").trim();
+      return text.length ? text : null;
     }
 
     // ---- Prefer PDF text if files were uploaded ----
     try {
-      const resumeFromPdf = await extractPdfText(files?.resumeFile);
+      const resumeFromPdf = await extractPdfText(
+        files.resumeFile as File | File[] | undefined
+      );
       if (resumeFromPdf) resume = resumeFromPdf;
 
-      const jobFromPdf = await extractPdfText(files?.jobFile);
+      const jobFromPdf = await extractPdfText(
+        files.jobFile as File | File[] | undefined
+      );
       if (jobFromPdf) jobDescription = jobFromPdf;
     } catch {
       return res.status(400).json({ error: "Failed to read one of the PDFs" });
@@ -101,17 +115,24 @@ Output:
         }),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        choices?: { message?: { content?: string } }[];
+        error?: { message?: string };
+      };
+
       const output = data.choices?.[0]?.message?.content;
       if (!output) throw new Error(data.error?.message || "No response from OpenAI");
 
       return res.status(200).json({ result: output });
-    } catch (error: any) {
-      console.error("OpenAI API Error:", error);
-      return res.status(500).json({ error: error.message || "Something went wrong" });
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong";
+      console.error("OpenAI API Error:", message);
+      return res.status(500).json({ error: message });
     }
   });
 }
+
 
 
 
