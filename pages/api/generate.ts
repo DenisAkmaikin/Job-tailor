@@ -20,10 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // ---- Text fields (present whether or not PDFs are uploaded) ----
-    const name = (fields.name as string) || "";
-    const email = (fields.email as string) || "";
-    const reasonForApplying = (fields.reasonForApplying as string) || "";
-    const toneDescription = (fields.toneDescription as string) || "";
+    const name = Array.isArray(fields.name) ? fields.name[0] : fields.name || "";
+    const email = Array.isArray(fields.email) ? fields.email[0] : fields.email || "";
+    const reasonForApplying = Array.isArray(fields.reasonForApplying) ? fields.reasonForApplying[0] : fields.reasonForApplying || "";
+    const toneDescription = Array.isArray(fields.toneDescription) ? fields.toneDescription[0] : fields.toneDescription || "";
+
 
     // Start with textarea values; PDFs (if uploaded) will override below
     let jobDescription = (fields.jobDescription as string) || "";
