@@ -27,8 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 
     // Start with textarea values; PDFs (if uploaded) will override below
-    let jobDescription = (fields.jobDescription as string) || "";
-    let resume = (fields.resume as string) || "";
+    let jobDescription = Array.isArray(fields.jobDescription) ? fields.jobDescription[0] : fields.jobDescription || "";
+    let resume = Array.isArray(fields.resume) ? fields.resume[0] : fields.resume || "";
+
 
     // ---- Helper to read + parse a single PDF file ----
     async function extractPdfText(
