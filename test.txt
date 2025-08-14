@@ -1,0 +1,34 @@
+job
+
+We are seeking a Data Analyst to join our team at FinTech Innovations. The ideal candidate will be responsible for collecting, analyzing, and interpreting large datasets to drive business solutions. Key responsibilities include:
+- Building dashboards and visualizations using Tableau or PowerBI
+- Performing advanced SQL queries and data cleaning in Python or R
+- Collaborating with cross-functional teams to identify opportunities for process improvement
+- Presenting data-driven insights to stakeholders
+Requirements:
+- Bachelor’s degree in a quantitative field
+- Experience with SQL, Excel, and a programming language (Python or R)
+- Strong communication and analytical skills
+- Experience with dashboarding tools a plus
+
+
+user
+
+Education:
+- BSc in Statistics, University of Amsterdam, 2024
+
+Experience:
+- Data Analyst Intern, RetailBoost (Feb 2024 – June 2024)
+    - Used SQL to extract and analyze sales data from large databases
+    - Built interactive dashboards in Tableau to monitor weekly KPIs
+    - Cleaned and processed raw CSV files with Python (Pandas)
+    - Presented monthly insights to team, helping to increase revenue by 8%
+
+Skills:
+- SQL (PostgreSQL, MySQL)
+- Python (Pandas, NumPy, Matplotlib)
+- Tableau
+- Data Visualization
+- Statistical Analysis
+- Excel (pivot tables, vlookups)
+- Strong written and verbal communication
