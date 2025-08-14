@@ -77,9 +77,10 @@ You are an expert career coach and resume writer.
 
 Given the following details, generate:
 1. A bullet list of key qualifications tailored to the job (using action verbs, avoid generic phrasing, focus on what truly matches the job requirements).
-2. A unique, authentic, and highly personalized 3-paragraph cover letter for this specific job and person, using the candidate’s name and email.
+2. A unique, authentic, and highly personalized 3-paragraph cover letter, written FROM the candidate (using their name and email provided below) TO the Hiring Manager at the company advertising this job.
 
 Guidelines:
+- Write the cover letter clearly from the perspective of the candidate, introducing themselves to the hiring manager at the company.
 - Do NOT simply restate the resume. Instead, synthesize and highlight the most relevant experiences, skills, and motivations that make the candidate a great fit for the specific role and company.
 - Weave in concrete achievements or moments from the resume, but do it in a narrative way.
 - Use details from the candidate's background, education, or story, not just lists of skills.
@@ -91,10 +92,10 @@ ${reasonForApplying ? `- Use this reason for applying to strengthen the connecti
 Job Description:
 ${jobDescription}
 
-Resume:
+Candidate Resume:
 ${resume}
 
-Candidate Details:
+Candidate Details (Person writing the letter):
 Name: ${name}
 Email: ${email}
 Tone: ${toneDescription} (0–3 = friendly/casual; 5 = professional/neutral; 10 = very formal/businesslike)
